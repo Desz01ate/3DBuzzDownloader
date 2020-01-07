@@ -33,16 +33,23 @@ namespace _3DBuzzDownloader
                 {
                     var fileName = file.Substring(file.LastIndexOf("/") + 1);
                     var savedFile = Path.Combine(baseDir, fileName);
-                    var wc = Download(file, savedFile);
-                    wc.DownloadProgressChanged += (s, e) =>
+                    if (File.Exists(savedFile))
                     {
-                        Console.Write($"\r--Downloading {fileName}... {e.ProgressPercentage}%");
-                    };
-                    while (wc.IsBusy)
-                    {
-                        await Task.Delay(1000);
+                        Console.WriteLine($"--{fileName} is already exists, skip.");
                     }
-                    Console.WriteLine(" Done.");
+                    else
+                    {
+                        var wc = Download(file, savedFile);
+                        wc.DownloadProgressChanged += (s, e) =>
+                        {
+                            Console.Write($"\r--Downloading {fileName}... {e.ProgressPercentage}%");
+                        };
+                        while (wc.IsBusy)
+                        {
+                            await Task.Delay(1000);
+                        }
+                        Console.WriteLine(" Done.");
+                    }
                     //Console.Write($@"--Downloading {fileName}... ");
                     //Console.WriteLine("Done");
                 }
