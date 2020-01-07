@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29209.152
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "3DBuzzDownloader", "3DBuzzDownloader\3DBuzzDownloader.csproj", "{D4A85E67-706C-4859-B43C-98F8886175BF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D4A85E67-706C-4859-B43C-98F8886175BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D4A85E67-706C-4859-B43C-98F8886175BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D4A85E67-706C-4859-B43C-98F8886175BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D4A85E67-706C-4859-B43C-98F8886175BF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {DB45C454-98D2-4C4F-A8CF-6DBC25EEF23A}
+	EndGlobalSection
+EndGlobal
