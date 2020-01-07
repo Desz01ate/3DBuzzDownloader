@@ -23,47 +23,63 @@ namespace _3DBuzzDownloader
             }
             var htmlDoc = new HtmlDocument();
             htmlDoc.LoadHtml(htmlSource);
-            var availableFiles = htmlDoc.DocumentNode.Descendants("a").Select(x => x.Attributes["href"].Value);
+            var availableFiles = htmlDoc.DocumentNode.Descendants("a").Select(x => x.Attributes["href"].Value).ToArray();
             Console.WriteLine($"Found {availableFiles.Count()} files.");
             Console.Write($"Please enter download destination : ");
             var baseDir = Console.ReadLine();
             if (!string.IsNullOrWhiteSpace(baseDir) && Directory.Exists(baseDir))
             {
+                var di = new DirectoryInfo(baseDir);
+                foreach (var file in di.GetFiles())
+                {
+                    if (file.Length == 0)
+                    {
+                        Console.WriteLine($"##found corrupted file ${file.FullName}, deleting...");
+                        File.Delete(file.FullName);
+                    }
+                }
                 foreach (var file in availableFiles)
                 {
                     var fileName = file.Substring(file.LastIndexOf("/") + 1);
                     var savedFile = Path.Combine(baseDir, fileName);
-                    if (File.Exists(savedFile))
+                    try
                     {
-                        Console.WriteLine($"--{fileName} is already exists, skip.");
-                    }
-                    else
-                    {
-                        var wc = Download(file, savedFile);
-                        wc.DownloadProgressChanged += (s, e) =>
+                        using var wc = new WebClient();
+                        var shouldLoad = true;
+                        if (File.Exists(savedFile))
                         {
-                            Console.Write($"\r--Downloading {fileName}... {e.ProgressPercentage}%");
-                        };
-                        while (wc.IsBusy)
-                        {
-                            await Task.Delay(1000);
+                            var fi = new FileInfo(savedFile);
+                            wc.OpenRead(file);
+                            var bytesLength = Convert.ToInt64(wc.ResponseHeaders["Content-Length"]);
+                            if (fi.Length == bytesLength)
+                            {
+                                Console.WriteLine($"--{fileName} is already exists, skip.");
+                                shouldLoad = false;
+                            }
                         }
-                        Console.WriteLine(" Done.");
+                        if (shouldLoad)
+                        {
+                            wc.DownloadFileAsync(new Uri(file), savedFile);
+                            wc.DownloadProgressChanged += (s, e) =>
+                            {
+                                Console.Write($"\r--Downloading {fileName}... {e.ProgressPercentage}%");
+                            };
+                            while (wc.IsBusy)
+                            {
+                                await Task.Delay(1000);
+                            }
+                            Console.WriteLine(" Done.");
+                        }
+                    }
+                    catch
+                    {
+                        Console.WriteLine($"Failed to load {file}, skip.");
                     }
                     //Console.Write($@"--Downloading {fileName}... ");
                     //Console.WriteLine("Done");
                 }
             }
 
-        }
-
-
-        public static WebClient Download(string fileUri, string savePath)
-        {
-            using var client = new WebClient();
-            var uri = new Uri(fileUri);
-            client.DownloadFileAsync(uri, savePath);
-            return client;
         }
     }
 }
